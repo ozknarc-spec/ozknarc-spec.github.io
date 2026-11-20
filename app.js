@@ -1,376 +1,71 @@
 let tumTelefonlar = [];
 let seciliTelefonlar = [];
-
-const OZELLIK_ETIKETLERI = {
-  marka: "Marka",
-  model: "Model",
-  cikisTarihi: "Çıkış Tarihi",
-  isletimSistemi: "İşletim Sistemi",
-  ekran: "Ekran",
-  yenilemeHizi: "Yenileme Hızı",
-  islemci: "İşlemci",
-  ram: "RAM",
-  depolama: "Depolama",
-  kamera: "Arka Kamera",
-  onKamera: "Ön Kamera",
-  batarya: "Batarya",
-  hizliSarj: "Hızlı Şarj",
-  kablosuzSarj: "Kablosuz Şarj",
-  agirlik: "Ağırlık",
-  boyutlar: "Boyutlar",
-  ipSertifikasi: "IP Sertifikası",
-  besG: "5G Desteği",
-  suyaDayaniklilik: "Suya/Toza Dayanıklılık"
-};
-
-const HARIC_TUTULAN_ALANLAR = [
-  "id",
-  "orijinalIndex",
-  "fiyat",
-  "fiyat_tl"
-];
-
-const MAKSIMUM_KARSILASTIRMA_SAYISI = 3;
-
-function etiketGetir(anahtar) {
-  if (OZELLIK_ETIKETLERI[anahtar]) {
-    return OZELLIK_ETIKETLERI[anahtar];
-  }
-
-  return anahtar
-    .replace(/([A-Z])/g, " $1")
-    .replace(/^./, (karakter) => karakter.toUpperCase())
-    .trim();
+let aktifGorunum = "all";
+const MAKSIMUM_KARSILASTIRMA = 4;
+const FAVORI_ANAHTARI = "telefonKarsilastirFavoriler";
+const SON_ANAHTARI = "telefonKarsilastirSon";
+const etiketler = {marka:"Marka",model:"Model",cikisTarihi:"Çıkış tarihi",isletimSistemi:"İşletim sistemi",ekran:"Ekran",yenilemeHizi:"Yenileme hızı",islemci:"İşlemci",ram:"RAM",depolama:"Depolama",kamera:"Arka kamera",onKamera:"Ön kamera",batarya:"Batarya",hizliSarj:"Hızlı şarj",kablosuzSarj:"Kablosuz şarj",agirlik:"Ağırlık",boyutlar:"Boyutlar",ipSertifikasi:"IP sertifikası",besG:"5G"};
+const gizliAlanlar = new Set(["id","fiyat","fiyat_tl"]);
+const $ = id => document.getElementById(id);
+const oku = (key) => { try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch { return []; } };
+const yaz = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch {} };
+const sayi = value => { const m=String(value ?? "").replace(",",".").match(/\d+(\.\d+)?/); return m ? Number(m[0]) : 0; };
+const ramDegeri = t => Math.max(0,...String(t.ram||"").match(/\d+/g)?.map(Number) || [0]);
+const bataryaDegeri = t => sayi(t.batarya);
+const ekranDegeri = t => sayi(t.ekran);
+const kameraDegeri = t => sayi(t.kamera);
+const etiket = key => etiketler[key] || key.replace(/([A-Z])/g," $1");
+const metin = value => Array.isArray(value) ? value.join(", ") : (value ?? "—");
+function guvenli(value) { return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function favoriler(){return oku(FAVORI_ANAHTARI);}
+function seciliFiltreliTelefonlar(){
+ let list=[...tumTelefonlar]; const q=$("arama-kutusu").value.toLocaleLowerCase("tr").trim();
+ const brand=$("marka-filtresi").value, minRam=Number($("ram-filtresi").value), minBat=Number($("batarya-filtresi").value), five=$("besg-filtresi").value;
+ if(brand!=="hepsi") list=list.filter(t=>t.marka===brand);
+ if(q) list=list.filter(t=>Object.values(t).join(" ").toLocaleLowerCase("tr").includes(q));
+ if(minRam) list=list.filter(t=>ramDegeri(t)>=minRam);
+ if(minBat) list=list.filter(t=>bataryaDegeri(t)>=minBat);
+ if(five==="evet") list=list.filter(t=>String(t.besG).toLocaleLowerCase("tr")==="evet");
+ const sort=$("siralama-secici").value;
+ if(sort==="batarya") list.sort((a,b)=>bataryaDegeri(b)-bataryaDegeri(a));
+ if(sort==="ram") list.sort((a,b)=>ramDegeri(b)-ramDegeri(a));
+ if(sort==="ekran") list.sort((a,b)=>ekranDegeri(b)-ekranDegeri(a));
+ if(aktifGorunum==="favorites") list=list.filter(t=>favoriler().includes(t.id));
+ if(aktifGorunum==="recent"){const recent=oku(SON_ANAHTARI);list=list.filter(t=>recent.includes(t.id)).sort((a,b)=>recent.indexOf(a.id)-recent.indexOf(b.id));}
+ return list;
 }
-
-function sayiCikar(deger) {
-  if (typeof deger === "number") return deger;
-
-  if (!deger) return 0;
-
-  const eslesme = String(deger)
-    .replace(",", ".")
-    .match(/\d+(\.\d+)?/);
-
-  return eslesme ? parseFloat(eslesme[0]) : 0;
+function puanla(t, alan){
+ // Bu puanlar laboratuvar testi değil; yalnızca veri setindeki teknik sayılara dayalı yaklaşık sıralama göstergesidir.
+ const ram=ramDegeri(t), battery=bataryaDegeri(t), refresh=sayi(t.yenilemeHizi), screen=ekranDegeri(t), camera=kameraDegeri(t);
+ const processor=String(t.islemci||"").toLowerCase();
+ const perf=(processor.includes("elite")||processor.includes("a19")||processor.includes("a18")||processor.includes("dimensity 9400")?95:processor.includes("gen 3")||processor.includes("a17")||processor.includes("dimensity 9300")?88:processor.includes("tensor g5")||processor.includes("8s gen 4")?82:70);
+ const raw={performans:perf, pil:Math.min(100,battery/60), kamera:Math.min(100,camera/2.2), ekran:Math.min(100,refresh/1.2+screen*2), genel:Math.round((perf+Math.min(100,battery/60)+Math.min(100,camera/2.2)+Math.min(100,refresh/1.2+screen*2)+Math.min(100,ram*6))/5)};
+ return Math.round(raw[alan]||raw.genel);
 }
-
-function markaListesiniDoldur() {
-  const markaSecici = document.getElementById("marka-filtresi");
-
-  markaSecici.innerHTML = `<option value="hepsi">Tüm Markalar</option>`;
-
-  const markalar = [...new Set(tumTelefonlar.map((telefon) => telefon.marka))].sort();
-
-  markalar.forEach((marka) => {
-    const secenek = document.createElement("option");
-    secenek.value = marka;
-    secenek.textContent = marka;
-    markaSecici.appendChild(secenek);
-  });
+function markaDoldur(){const s=$("marka-filtresi"), old=s.value; s.innerHTML='<option value="hepsi">Tüm Markalar</option>'+[...new Set(tumTelefonlar.map(t=>t.marka))].sort().map(m=>'<option>'+guvenli(m)+'</option>').join("");s.value=old;}
+function kart(t){
+ const selected=seciliTelefonlar.includes(t.id), fav=favoriler().includes(t.id);
+ return '<article class="telefon-karti"><div class="kart-top"><span class="marka-etiket">'+guvenli(t.marka)+'</span><span class="puan">'+puanla(t,"genel")+'/100 tahmini puan</span></div><h3>'+guvenli(t.model)+'</h3><ul class="ozellik-listesi">'+["islemci","ram","depolama","ekran","kamera","batarya"].map(k=>'<li><strong>'+etiket(k)+':</strong> '+guvenli(metin(t[k]))+'</li>').join("")+'</ul><div class="kart-actions"><button class="button" data-action="compare" data-id="'+guvenli(t.id)+'" '+(selected?'disabled':'')+'>'+(selected?'Seçildi':'Karşılaştır')+'</button><button class="button secondary" data-action="detail" data-id="'+guvenli(t.id)+'">Detaylar</button><button class="button secondary" data-action="favorite" data-id="'+guvenli(t.id)+'" aria-pressed="'+fav+'">'+(fav?'♥ Favoride':'♡ Favorile')+'</button></div></article>';
 }
-
-function filtrelenmisVeSiralanmisTelefonlar() {
-  const aramaKutusu = document.getElementById("arama-kutusu");
-  const markaSecici = document.getElementById("marka-filtresi");
-  const siralamaSecici = document.getElementById("siralama-secici");
-
-  const aramaMetni = aramaKutusu.value.toLowerCase().trim();
-  const seciliMarka = markaSecici.value;
-  const siralama = siralamaSecici.value;
-
-  let sonuc = tumTelefonlar.map((telefon, orijinalIndex) => ({
-    ...telefon,
-    orijinalIndex
-  }));
-
-  if (seciliMarka !== "hepsi") {
-    sonuc = sonuc.filter((telefon) => telefon.marka === seciliMarka);
-  }
-
-  if (aramaMetni !== "") {
-    sonuc = sonuc.filter((telefon) => {
-      const tumDegerler = Object.values(telefon)
-        .join(" ")
-        .toLowerCase();
-
-      return tumDegerler.includes(aramaMetni);
-    });
-  }
-
-  if (siralama === "batarya-azalan") {
-    sonuc.sort((a, b) => sayiCikar(b.batarya) - sayiCikar(a.batarya));
-  } else if (siralama === "ram-azalan") {
-    sonuc.sort((a, b) => sayiCikar(b.ram) - sayiCikar(a.ram));
-  }
-
-  return sonuc;
+function kartlariCiz(){const list=seciliFiltreliTelefonlar();$("sonuc-sayisi").textContent="("+list.length+" telefon)";$("telefon-listesi").innerHTML=list.length?list.map(kart).join(""):'<p class="muted">Bu ölçütlere uygun telefon bulunamadı.</p>';}
+function karsilastirmayiCiz(){
+ const chosen=seciliTelefonlar.map(id=>tumTelefonlar.find(t=>t.id===id)).filter(Boolean);
+ if(!chosen.length){$("karsilastirma-alani").innerHTML='<p class="muted">Karşılaştırmak için telefon kartlarından seçim yap.</p>';return;}
+ const keys=["marka","model","cikisTarihi","isletimSistemi","islemci","ram","depolama","ekran","yenilemeHizi","kamera","onKamera","batarya","hizliSarj","kablosuzSarj","agirlik","ipSertifikasi","besG"];
+ $("karsilastirma-alani").innerHTML='<div class="tablo-kapsayici"><table class="karsilastirma-tablosu"><thead><tr><th>Özellik</th>'+chosen.map(t=>'<th>'+guvenli(t.marka+" "+t.model)+'</th>').join("")+'</tr></thead><tbody>'+keys.map(k=>'<tr><th>'+etiket(k)+'</th>'+chosen.map(t=>'<td>'+guvenli(metin(t[k]))+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>';
 }
-
-function kartOzellikListesiOlustur(telefon) {
-  return Object.entries(telefon)
-    .filter(([anahtar, deger]) => {
-      return (
-        !HARIC_TUTULAN_ALANLAR.includes(anahtar) &&
-        deger !== null &&
-        deger !== undefined &&
-        String(deger).trim() !== ""
-      );
-    })
-    .map(([anahtar, deger]) => {
-      const metin = Array.isArray(deger) ? deger.join(", ") : deger;
-
-      return `<li><strong>${etiketGetir(anahtar)}:</strong> ${metin}</li>`;
-    })
-    .join("");
+function favoriDegistir(id){let f=favoriler();f=f.includes(id)?f.filter(x=>x!==id):[...f,id];yaz(FAVORI_ANAHTARI,f);kartlariCiz();}
+function sonGorulen(id){let a=oku(SON_ANAHTARI).filter(x=>x!==id);a.unshift(id);yaz(SON_ANAHTARI,a.slice(0,12));}
+function detayAc(id){const t=tumTelefonlar.find(x=>x.id===id);if(!t)return;sonGorulen(id);$("detay-baslik").textContent=t.marka+" "+t.model;$("detay-icerik").innerHTML='<div class="detay-puan"><strong>'+puanla(t,"genel")+'/100</strong><span>Teknik özelliklerden hesaplanan yaklaşık puan</span></div><dl class="detay-grid">'+Object.entries(t).filter(([k,v])=>!gizliAlanlar.has(k)&&v!==null&&v!=="").map(([k,v])=>'<div><dt>'+etiket(k)+'</dt><dd>'+guvenli(metin(v))+'</dd></div>').join("")+'</dl><p class="muted">Puan, bağımsız test sonucu değildir; mevcut teknik verilerden oluşturulmuş yaklaşık bir göstergedir.</p>';$("telefon-detay-dialog").showModal();kartlariCiz();}
+function oner(){const usage=$("kullanim-onceligi").value,min=Number($("onerici-ram").value);const candidates=tumTelefonlar.filter(t=>ramDegeri(t)>=min);const score=t=>usage==="oyun"?puanla(t,"performans"):usage==="kamera"?puanla(t,"kamera"):usage==="pil"?puanla(t,"pil"):usage==="ekran"?puanla(t,"ekran"):puanla(t,"genel");const best=[...candidates].sort((a,b)=>score(b)-score(a)).slice(0,3);$("oner-sonuc").innerHTML=best.length?'<h3>Öneriler</h3><div class="oner-kartlar">'+best.map(t=>'<button class="oner-kart" data-action="detail" data-id="'+guvenli(t.id)+'"><strong>'+guvenli(t.marka+" "+t.model)+'</strong><span>'+score(t)+'/100 yaklaşık eşleşme puanı</span></button>').join("")+'</div><p class="muted">Öneriler yalnızca mevcut teknik özelliklere göre sıralanır; fiyat ve bağımsız performans testi içermez.</p>':'<p>Bu RAM ölçütünde telefon bulunamadı.</p>';}
+function olaylar(){
+ ["arama-kutusu","marka-filtresi","siralama-secici","ram-filtresi","batarya-filtresi","besg-filtresi"].forEach(id=>$(id).addEventListener(id==="arama-kutusu"?"input":"change",kartlariCiz));
+ $("filtreleri-temizle").addEventListener("click",()=>{["arama-kutusu"].forEach(id=>$(id).value="");["marka-filtresi","siralama-secici","ram-filtresi","batarya-filtresi","besg-filtresi"].forEach((id,i)=>$(id).selectedIndex=0);aktifGorunum="all";document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.view==="all"));kartlariCiz();});
+ $("telefon-listesi").addEventListener("click",e=>{const b=e.target.closest("button[data-action]");if(!b)return;const {action,id}=b.dataset;if(action==="compare"){if(seciliTelefonlar.length>=MAKSIMUM_KARSILASTIRMA){alert("En fazla 4 telefon karşılaştırabilirsin.");return;}seciliTelefonlar.push(id);kartlariCiz();karsilastirmayiCiz();}if(action==="favorite")favoriDegistir(id);if(action==="detail")detayAc(id);});
+ $("karsilastirmayi-temizle").addEventListener("click",()=>{seciliTelefonlar=[];kartlariCiz();karsilastirmayiCiz();});
+ document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{aktifGorunum=b.dataset.view;document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));kartlariCiz();}));
+ $("oner-button").addEventListener("click",oner);$("detay-kapat").addEventListener("click",()=>$("telefon-detay-dialog").close());
+ $("telefon-detay-dialog").addEventListener("click",e=>{if(e.target===$("telefon-detay-dialog"))$("telefon-detay-dialog").close();});
 }
-
-function kartOlustur(telefon) {
-  const seciliMi = seciliTelefonlar.includes(telefon.orijinalIndex);
-
-  return `
-    <article class="telefon-karti ${seciliMi ? "secili" : ""}" data-index="${telefon.orijinalIndex}">
-      <h2>${telefon.marka || "Bilinmiyor"} ${telefon.model || ""}</h2>
-
-      <button
-        class="karsilastir-butonu"
-        data-index="${telefon.orijinalIndex}"
-        ${seciliMi ? "disabled" : ""}
-      >
-        ${seciliMi ? "Seçildi" : "Karşılaştırmaya Ekle"}
-      </button>
-
-      <ul class="telefon-ozellikleri">
-        ${kartOzellikListesiOlustur(telefon)}
-      </ul>
-    </article>
-  `;
-}
-
-function kartlariCiz() {
-  const telefonListesi = document.getElementById("telefon-listesi");
-  const telefonlar = filtrelenmisVeSiralanmisTelefonlar();
-
-  if (telefonlar.length === 0) {
-    telefonListesi.innerHTML = `
-      <p class="bos-sonuc">
-        Aramanıza uygun telefon bulunamadı.
-      </p>
-    `;
-
-    return;
-  }
-
-  telefonListesi.innerHTML = telefonlar
-    .map((telefon) => kartOlustur(telefon))
-    .join("");
-}
-
-function karsilastirmayiCiz() {
-  const karsilastirmaAlani = document.getElementById("karsilastirma-alani");
-
-  if (seciliTelefonlar.length === 0) {
-    karsilastirmaAlani.innerHTML = `
-      <p class="karsilastirma-bilgi">
-        Karşılaştırmak için en fazla ${MAKSIMUM_KARSILASTIRMA_SAYISI} telefon seçebilirsin.
-      </p>
-    `;
-
-    return;
-  }
-
-  const seciliTelefonNesneleri = seciliTelefonlar
-    .map((index) => tumTelefonlar[index])
-    .filter(Boolean);
-
-  const tumAlanlar = new Set();
-
-  seciliTelefonNesneleri.forEach((telefon) => {
-    Object.keys(telefon).forEach((anahtar) => {
-      if (!HARIC_TUTULAN_ALANLAR.includes(anahtar)) {
-        tumAlanlar.add(anahtar);
-      }
-    });
-  });
-
-  const siraliAlanlar = [
-    "marka",
-    "model",
-    "cikisTarihi",
-    "isletimSistemi",
-    "islemci",
-    "ram",
-    "depolama",
-    "ekran",
-    "yenilemeHizi",
-    "kamera",
-    "onKamera",
-    "batarya",
-    "hizliSarj",
-    "kablosuzSarj",
-    "agirlik",
-    "boyutlar",
-    "ipSertifikasi",
-    "besG"
-  ];
-
-  const digerAlanlar = [...tumAlanlar].filter(
-    (alan) => !siraliAlanlar.includes(alan)
-  );
-
-  const tabloBasliklari = seciliTelefonNesneleri
-    .map(
-      (telefon) => `
-        <th>
-          ${telefon.marka || ""} ${telefon.model || ""}
-        </th>
-      `
-    )
-    .join("");
-
-  const tabloSatirlari = [...siraliAlanlar, ...digerAlanlar]
-    .filter((alan) => tumAlanlar.has(alan))
-    .map((alan) => {
-      const hucreler = seciliTelefonNesneleri
-        .map((telefon) => {
-          const deger = telefon[alan];
-
-          const gorunenDeger =
-            deger === null ||
-            deger === undefined ||
-            String(deger).trim() === ""
-              ? "—"
-              : Array.isArray(deger)
-                ? deger.join(", ")
-                : deger;
-
-          return `<td>${gorunenDeger}</td>`;
-        })
-        .join("");
-
-      return `
-        <tr>
-          <th>${etiketGetir(alan)}</th>
-          ${hucreler}
-        </tr>
-      `;
-    })
-    .join("");
-
-  karsilastirmaAlani.innerHTML = `
-    <div class="karsilastirma-baslik">
-      <h2>Telefon Karşılaştırması</h2>
-
-      <button id="karsilastirmayi-temizle" class="temizle-butonu">
-        Karşılaştırmayı Temizle
-      </button>
-    </div>
-
-    <div class="tablo-kapsayici">
-      <table class="karsilastirma-tablosu">
-        <thead>
-          <tr>
-            <th>Özellik</th>
-            ${tabloBasliklari}
-          </tr>
-        </thead>
-
-        <tbody>
-          ${tabloSatirlari}
-        </tbody>
-      </table>
-    </div>
-  `;
-
-  const temizleButonu = document.getElementById("karsilastirmayi-temizle");
-
-  if (temizleButonu) {
-    temizleButonu.addEventListener("click", () => {
-      seciliTelefonlar = [];
-      kartlariCiz();
-      karsilastirmayiCiz();
-    });
-  }
-}
-
-function telefonSecimDurumunuGuncelle(index) {
-  const zatenSecili = seciliTelefonlar.includes(index);
-
-  if (zatenSecili) {
-    seciliTelefonlar = seciliTelefonlar.filter(
-      (seciliIndex) => seciliIndex !== index
-    );
-  } else {
-    if (seciliTelefonlar.length >= MAKSIMUM_KARSILASTIRMA_SAYISI) {
-      alert(
-        `En fazla ${MAKSIMUM_KARSILASTIRMA_SAYISI} telefon karşılaştırabilirsin.`
-      );
-
-      return;
-    }
-
-    seciliTelefonlar.push(index);
-  }
-
-  kartlariCiz();
-  karsilastirmayiCiz();
-}
-
-function olayDinleyicileriniEkle() {
-  const aramaKutusu = document.getElementById("arama-kutusu");
-  const markaSecici = document.getElementById("marka-filtresi");
-  const siralamaSecici = document.getElementById("siralama-secici");
-  const telefonListesi = document.getElementById("telefon-listesi");
-
-  aramaKutusu.addEventListener("input", kartlariCiz);
-  markaSecici.addEventListener("change", kartlariCiz);
-  siralamaSecici.addEventListener("change", kartlariCiz);
-
-  telefonListesi.addEventListener("click", (olay) => {
-    const buton = olay.target.closest(".karsilastir-butonu");
-
-    if (!buton) return;
-
-    const index = Number(buton.dataset.index);
-
-    telefonSecimDurumunuGuncelle(index);
-  });
-}
-
-async function telefonlariYukle() {
-  try {
-    const yanit = await fetch("telefonlar.json");
-
-    if (!yanit.ok) {
-      throw new Error(`JSON dosyası yüklenemedi: ${yanit.status}`);
-    }
-
-    const veri = await yanit.json();
-
-    if (!Array.isArray(veri)) {
-      throw new Error("telefonlar.json bir dizi değil.");
-    }
-
-    tumTelefonlar = veri;
-
-    markaListesiniDoldur();
-    kartlariCiz();
-    karsilastirmayiCiz();
-  } catch (hata) {
-    console.error(hata);
-
-    const telefonListesi = document.getElementById("telefon-listesi");
-
-    telefonListesi.innerHTML = `
-      <p class="hata-mesaji">
-        Telefon verileri yüklenemedi. <br>
-        <strong>Hata:</strong> ${hata.message}
-      </p>
-    `;
-  }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  olayDinleyicileriniEkle();
-  telefonlariYukle();
-});
+async function baslat(){olaylar();try{const response=await fetch("telefonlar.json");if(!response.ok)throw new Error("Telefon verileri yüklenemedi ("+response.status+")");const data=await response.json();if(!Array.isArray(data))throw new Error("Telefon veri dosyası beklenen formatta değil.");tumTelefonlar=data;markaDoldur();kartlariCiz();karsilastirmayiCiz();}catch(err){$("telefon-listesi").innerHTML='<p class="hata-mesaji">'+guvenli(err.message)+'</p>';}}
+document.addEventListener("DOMContentLoaded",baslat);
