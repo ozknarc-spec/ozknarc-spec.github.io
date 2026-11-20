@@ -49,10 +49,6 @@ function sayiCikar(deger) {
   return eslesme ? parseFloat(eslesme[0]) : 0;
 }
 
-function fiyatFormatla(fiyat) {
-  return Number(fiyat).toLocaleString("tr-TR") + " ₺";
-}
-
 function markaListesiniDoldur() {
   const markaSecici = document.getElementById("marka-filtresi");
   markaSecici.innerHTML = `<option value="hepsi">Tüm Markalar</option>`;
@@ -90,11 +86,7 @@ function filtrelenmisVeSiralanmisTelefonlar() {
     });
   }
 
-  if (siralama === "fiyat-artan") {
-    sonuc.sort((a, b) => sayiCikar(a.fiyat) - sayiCikar(b.fiyat));
-  } else if (siralama === "fiyat-azalan") {
-    sonuc.sort((a, b) => sayiCikar(b.fiyat) - sayiCikar(a.fiyat));
-  } else if (siralama === "batarya-azalan") {
+  if (siralama === "batarya-azalan") {
     sonuc.sort((a, b) => sayiCikar(b.batarya) - sayiCikar(a.batarya));
   } else if (siralama === "ram-azalan") {
     sonuc.sort((a, b) => sayiCikar(b.ram) - sayiCikar(a.ram));
@@ -133,7 +125,7 @@ function kartlariCiz() {
     .map((tel) => {
       const seciliMi = seciliTelefonlar.includes(tel.orijinalIndex);
 
-      return ` <article class="telefon-karti ${seciliMi ? "secili" : ""}"> <div> <div class="kart-ust"> <span class="marka-etiket">${tel.marka}</span> </div> <h3>${tel.marka} ${tel.model}</h3> <p class="fiyat">${fiyatFormatla(tel.fiyat)}</p> <ul> ${kartOzellikListesiOlustur(tel)} </ul> </div> <button onclick="karsilastirmayaEkleCikar(${tel.orijinalIndex})"> ${seciliMi ? "✓ Karşılaştırmada" : "+ Karşılaştır"} </button> </article> `;
+      return ` <article class="telefon-karti ${seciliMi ? "secili" : ""}"> <div> <div class="kart-ust"> <span class="marka-etiket">${tel.marka}</span> </div> <h3>${tel.marka} ${tel.model}</h3> <ul> ${kartOzellikListesiOlustur(tel)} </ul> </div> <button onclick="karsilastirmayaEkleCikar(${tel.orijinalIndex})"> ${seciliMi ? "✓ Karşılaştırmada" : "+ Karşılaştır"} </button> </article> `;
     })
     .join("");
 }
@@ -167,7 +159,7 @@ function karsilastirmayiCiz() {
     })
     .join("");
 
-  alan.innerHTML = ` <div class="karsilastirma-kutusu"> <div class="karsilastirma-ust"> <h2>⚖️ Karşılaştırma Tablosu (${secilenler.length}/3)</h2> <button class="temizle-btn" onclick="karsilastirmayiTemizle()">Temizle</button> </div> <div class="tablo-sarmalayici"> <table> <thead> <tr> <th>Özellik</th> ${secilenler .map((t) => `<th>${t.marka} ${t.model}</th>`) .join("")} </tr> </thead> <tbody> <tr> <td><strong>Fiyat</strong></td> ${secilenler .map( (t) => `<td class="tablo-fiyat">${fiyatFormatla(t.fiyat)}</td>` ) .join("")} </tr> ${tabloSatirlari} </tbody> </table> </div> </div> `;
+  alan.innerHTML = ` <div class="karsilastirma-kutusu"> <div class="karsilastirma-ust"> <h2>⚖️ Karşılaştırma Tablosu (${secilenler.length}/3)</h2> <button class="temizle-btn" onclick="karsilastirmayiTemizle()">Temizle</button> </div> <div class="tablo-sarmalayici"> <table> <thead> <tr> <th>Özellik</th> ${secilenler .map((t) => `<th>${t.marka} ${t.model}</th>`) .join("")} </tr> </thead> <tbody> ${tabloSatirlari} </tbody> </table> </div> </div> `;
 }
 
 function karsilastirmayaEkleCikar(orijinalIndex) {
@@ -197,10 +189,7 @@ async function telefonlariYukle() {
     const yanit = await fetch("./telefonlar.json");
     if (!yanit.ok) throw new Error("telefonlar.json okunamadı.");
 
-    tumTelefonlar = (await yanit.json()).map((t) => ({
-      ...t,
-      fiyat: t.fiyat ?? t.fiyat_tl,
-    }));
+    tumTelefonlar = await yanit.json();
     markaListesiniDoldur();
     kartlariCiz();
 
