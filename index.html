@@ -14,27 +14,21 @@
   </header>
 
   <section class="filtre-alani">
-    <input type="text" id="arama-kutusu" placeholder="Marka, model veya işlemci ara... (örn: Samsung, A18, 120W)">
-    
+    <input type="text" id="arama-kutusu" placeholder="Marka, model veya işlemci ara... (örn: Samsung, A18, 120Hz)">
+
     <select id="marka-filtresi">
       <option value="hepsi">Tüm Markalar</option>
     </select>
 
     <select id="siralama-secici">
       <option value="varsayilan">Sıralama: Varsayılan</option>
-      <option value="fiyat-artan">Fiyat: Ucuzdan Pahalıya</option>
-      <option value="fiyat-azalan">Fiyat: Pahalıdan Ucuza</option>
       <option value="batarya-azalan">Batarya: En Yüksek</option>
       <option value="ram-azalan">RAM: En Yüksek</option>
+      <option value="fiyat-artan">Fiyat: En Düşük</option>
+      <option value="fiyat-azalan">Fiyat: En Yüksek</option>
     </select>
   </section>
 
-  <section id="karsilastirma-alani"></section>
+  <section id="karsilastirma-alani" class="karsilastirma-alani"></section>
 
   <section id="telefon-listesi" class="telefon-listesi">
-    <p>Telefonlar yükleniyor...</p>
-  </section>
-
-  <script src="app.js"></script>
-</body>
-</html>
