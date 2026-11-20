@@ -231,4 +231,146 @@ function karsilastirmayiCiz() {
   const tabloSatirlari = [...siraliAlanlar, ...digerAlanlar]
     .filter((alan) => tumAlanlar.has(alan))
     .map((alan) => {
-      con
+      const hucreler = seciliTelefonNesneleri
+        .map((telefon) => {
+          const deger = telefon[alan];
+
+          const gorunenDeger =
+            deger === null ||
+            deger === undefined ||
+            String(deger).trim() === ""
+              ? "—"
+              : Array.isArray(deger)
+                ? deger.join(", ")
+                : deger;
+
+          return `<td>${gorunenDeger}</td>`;
+        })
+        .join("");
+
+      return `
+        <tr>
+          <th>${etiketGetir(alan)}</th>
+          ${hucreler}
+        </tr>
+      `;
+    })
+    .join("");
+
+  karsilastirmaAlani.innerHTML = `
+    <div class="karsilastirma-baslik">
+      <h2>Telefon Karşılaştırması</h2>
+
+      <button id="karsilastirmayi-temizle" class="temizle-butonu">
+        Karşılaştırmayı Temizle
+      </button>
+    </div>
+
+    <div class="tablo-kapsayici">
+      <table class="karsilastirma-tablosu">
+        <thead>
+          <tr>
+            <th>Özellik</th>
+            ${tabloBasliklari}
+          </tr>
+        </thead>
+
+        <tbody>
+          ${tabloSatirlari}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  const temizleButonu = document.getElementById("karsilastirmayi-temizle");
+
+  if (temizleButonu) {
+    temizleButonu.addEventListener("click", () => {
+      seciliTelefonlar = [];
+      kartlariCiz();
+      karsilastirmayiCiz();
+    });
+  }
+}
+
+function telefonSecimDurumunuGuncelle(index) {
+  const zatenSecili = seciliTelefonlar.includes(index);
+
+  if (zatenSecili) {
+    seciliTelefonlar = seciliTelefonlar.filter(
+      (seciliIndex) => seciliIndex !== index
+    );
+  } else {
+    if (seciliTelefonlar.length >= MAKSIMUM_KARSILASTIRMA_SAYISI) {
+      alert(
+        `En fazla ${MAKSIMUM_KARSILASTIRMA_SAYISI} telefon karşılaştırabilirsin.`
+      );
+
+      return;
+    }
+
+    seciliTelefonlar.push(index);
+  }
+
+  kartlariCiz();
+  karsilastirmayiCiz();
+}
+
+function olayDinleyicileriniEkle() {
+  const aramaKutusu = document.getElementById("arama-kutusu");
+  const markaSecici = document.getElementById("marka-filtresi");
+  const siralamaSecici = document.getElementById("siralama-secici");
+  const telefonListesi = document.getElementById("telefon-listesi");
+
+  aramaKutusu.addEventListener("input", kartlariCiz);
+  markaSecici.addEventListener("change", kartlariCiz);
+  siralamaSecici.addEventListener("change", kartlariCiz);
+
+  telefonListesi.addEventListener("click", (olay) => {
+    const buton = olay.target.closest(".karsilastir-butonu");
+
+    if (!buton) return;
+
+    const index = Number(buton.dataset.index);
+
+    telefonSecimDurumunuGuncelle(index);
+  });
+}
+
+async function telefonlariYukle() {
+  try {
+    const yanit = await fetch("telefonlar.json");
+
+    if (!yanit.ok) {
+      throw new Error(`JSON dosyası yüklenemedi: ${yanit.status}`);
+    }
+
+    const veri = await yanit.json();
+
+    if (!Array.isArray(veri)) {
+      throw new Error("telefonlar.json bir dizi değil.");
+    }
+
+    tumTelefonlar = veri;
+
+    markaListesiniDoldur();
+    kartlariCiz();
+    karsilastirmayiCiz();
+  } catch (hata) {
+    console.error(hata);
+
+    const telefonListesi = document.getElementById("telefon-listesi");
+
+    telefonListesi.innerHTML = `
+      <p class="hata-mesaji">
+        Telefon verileri yüklenemedi. <br>
+        <strong>Hata:</strong> ${hata.message}
+      </p>
+    `;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  olayDinleyicileriniEkle();
+  telefonlariYukle();
+});
