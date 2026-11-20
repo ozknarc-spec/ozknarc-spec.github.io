@@ -1,0 +1,26 @@
+[
+  {
+    "marka":"Samsung",
+    "model":"Galaxy A56",
+    "fiyat":15999,
+    "ram":8,
+    "kamera":50,
+    "batarya":5000
+  },
+  {
+    "marka":"Redmi",
+    "model":"Note 14",
+    "fiyat":12999,
+    "ram":8,
+    "kamera":108,
+    "batarya":5500
+  },
+  {
+    "marka":"Nokia",
+    "model":"2660 Flip",
+    "fiyat":2999,
+    "ram":1,
+    "kamera":0,
+    "batarya":1450
+  }
+]
