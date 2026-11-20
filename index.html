@@ -4,42 +4,79 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Telefon Karşılaştırma | Telefon Özelliklerini Karşılaştır</title>
-  <meta name="description" content="Apple, Samsung, Xiaomi ve diğer markaların telefonlarını kamera, işlemci, RAM, ekran ve batarya özelliklerine göre karşılaştır.">
+  <meta name="description" content="Telefonları kamera, işlemci, RAM, ekran ve batarya özelliklerine göre karşılaştır. Filtrele, favorilerine ekle ve sana uygun telefonu keşfet.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://ozknarc-spec.github.io/telefonkarsilastir/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Telefon Karşılaştırma">
+  <meta property="og:description" content="Telefon özelliklerini karşılaştır, filtrele ve sana uygun modeli bul.">
   <meta property="og:url" content="https://ozknarc-spec.github.io/telefonkarsilastir/">
+  <meta name="google-site-verification" content="McoHzZxDmzlGXAEIePT1lL_k0ucxNGN8V527LZLeuDw">
   <link rel="stylesheet" href="style.css">
-  <meta name="google-site-verification" content="McoHzZxDmzlGXAEIePT1lL_k0ucxNGN8V527LZLeuDw" />
 </head>
 <body>
-
   <header>
     <h1>📱 TelefonKarşılaştır</h1>
-    <p>Türkiye'nin kapsamlı telefon karşılaştırma platformu.</p>
+    <p>Telefonları karşılaştır, ihtiyaçlarına uygun modeli keşfet.</p>
   </header>
 
-  <section class="filtre-alani">
-    <input
-      type="text"
-      id="arama-kutusu"
-      placeholder="Marka, model veya işlemci ara... (örn: Samsung, A18, 120Hz)"
-    >
+  <main>
+    <section class="panel" aria-labelledby="filtre-baslik">
+      <h2 id="filtre-baslik">Telefon bul</h2>
+      <div class="filtre-alani">
+        <input type="search" id="arama-kutusu" placeholder="Marka, model veya işlemci ara..." aria-label="Telefon ara">
+        <select id="marka-filtresi" aria-label="Markaya göre filtrele"><option value="hepsi">Tüm Markalar</option></select>
+        <select id="siralama-secici" aria-label="Sıralama">
+          <option value="varsayilan">Sıralama: Varsayılan</option>
+          <option value="batarya">Batarya: En yüksek</option>
+          <option value="ram">RAM: En yüksek</option>
+          <option value="ekran">Ekran: En büyük</option>
+        </select>
+        <select id="ram-filtresi" aria-label="Minimum RAM">
+          <option value="0">RAM: Tümü</option><option value="4">En az 4 GB</option><option value="6">En az 6 GB</option><option value="8">En az 8 GB</option><option value="12">En az 12 GB</option><option value="16">En az 16 GB</option>
+        </select>
+        <select id="batarya-filtresi" aria-label="Minimum batarya">
+          <option value="0">Batarya: Tümü</option><option value="4000">En az 4000 mAh</option><option value="4500">En az 4500 mAh</option><option value="5000">En az 5000 mAh</option><option value="5500">En az 5500 mAh</option>
+        </select>
+        <select id="besg-filtresi" aria-label="5G filtresi"><option value="hepsi">5G: Tümü</option><option value="evet">5G destekleyenler</option></select>
+      </div>
+      <button id="filtreleri-temizle" class="button secondary">Filtreleri temizle</button>
+    </section>
 
-    <select id="marka-filtresi">
-      <option value="hepsi">Tüm Markalar</option>
-    </select>
+    <section class="panel" id="onerici">
+      <h2>Sana uygun telefonu bul</h2>
+      <p>Bütçe bilgisi fiyat verisi gerektirdiğinden bu öneri, kullanım önceliğine ve teknik özelliklere göre çalışır.</p>
+      <div class="onerici-alani">
+        <label>Kullanım önceliğin
+          <select id="kullanim-onceligi">
+            <option value="dengeli">Genel kullanım</option><option value="oyun">Oyun ve performans</option><option value="kamera">Kamera</option><option value="pil">Uzun pil ömrü</option><option value="ekran">Ekran deneyimi</option>
+          </select>
+        </label>
+        <label>Minimum RAM
+          <select id="onerici-ram"><option value="0">Fark etmez</option><option value="8">8 GB</option><option value="12">12 GB</option><option value="16">16 GB</option></select>
+        </label>
+        <button id="oner-button" class="button">Telefon öner</button>
+      </div>
+      <div id="oner-sonuc" aria-live="polite"></div>
+    </section>
 
-    <select id="siralama-secici">
-      <option value="varsayilan">Sıralama: Varsayılan</option>
-      <option value="batarya-azalan">Batarya: En Yüksek</option>
-      <option value="ram-azalan">RAM: En Yüksek</option>
-    </select>
-  </section>
+    <section class="panel">
+      <div class="section-heading"><div><h2>Karşılaştırma</h2><p>En fazla 4 telefon seçebilirsin.</p></div><button id="karsilastirmayi-temizle" class="button secondary">Seçimi temizle</button></div>
+      <div id="karsilastirma-alani"><p class="muted">Karşılaştırmak için telefon kartlarından seçim yap.</p></div>
+    </section>
 
-  <section id="karsilastirma-alani" class="karsilastirma-alani"></section>
+    <section class="panel">
+      <h2>Telefonlar <span id="sonuc-sayisi" class="muted"></span></h2>
+      <div class="tabs"><button class="tab active" data-view="all">Tüm telefonlar</button><button class="tab" data-view="favorites">Favorilerim</button><button class="tab" data-view="recent">Son incelediklerim</button></div>
+      <div id="telefon-listesi" class="telefon-listesi" aria-live="polite"><p>Telefonlar yükleniyor...</p></div>
+    </section>
+  </main>
 
-  <section id="telefon-listesi" class="telefon-listesi"></section>
-
+  <dialog id="telefon-detay-dialog" class="detay-dialog">
+    <div class="dialog-head"><h2 id="detay-baslik">Telefon detayları</h2><button id="detay-kapat" class="button secondary" aria-label="Kapat">Kapat ✕</button></div>
+    <div id="detay-icerik"></div>
+  </dialog>
+  <footer><p>Teknik özellikler bilgilendirme amaçlıdır. Satın almadan önce üretici ve satıcı bilgilerini kontrol edin.</p></footer>
   <script src="app.js"></script>
 </body>
 </html>
