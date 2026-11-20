@@ -2,8 +2,12 @@ let tumTelefonlar = [];
 let seciliTelefonlar = [];
 
 const OZELLIK_ETIKETLERI = {
+  marka: "Marka",
+  model: "Model",
+  cikisTarihi: "Çıkış Tarihi",
   isletimSistemi: "İşletim Sistemi",
   ekran: "Ekran",
+  yenilemeHizi: "Yenileme Hızı",
   islemci: "İşlemci",
   ram: "RAM",
   depolama: "Depolama",
@@ -11,23 +15,19 @@ const OZELLIK_ETIKETLERI = {
   onKamera: "Ön Kamera",
   batarya: "Batarya",
   hizliSarj: "Hızlı Şarj",
-  sarjGirisi: "Şarj Girişi",
   kablosuzSarj: "Kablosuz Şarj",
-  simDestegi: "SIM Desteği",
-  guvenlik: "Güvenlik",
-  sesHoparlor: "Ses & Hoparlör",
   agirlik: "Ağırlık",
+  boyutlar: "Boyutlar",
+  ipSertifikasi: "IP Sertifikası",
   besG: "5G Desteği",
   suyaDayaniklilik: "Suya/Toza Dayanıklılık",
 };
 
 const HARIC_TUTULAN_ALANLAR = [
-  "marka",
-  "model",
-  "fiyat",
-  "fiyat_tl",
   "id",
   "orijinalIndex",
+  "fiyat",
+  "fiyat_tl",
 ];
 
 function etiketGetir(anahtar) {
@@ -43,9 +43,7 @@ function etiketGetir(anahtar) {
 function sayiCikar(deger) {
   if (typeof deger === "number") return deger;
   if (!deger) return 0;
-  const eslesme = String(deger)
-    .replace(",", ".")
-    .match(/\d+(\.\d+)?/);
+  const eslesme = String(deger).replace(",", ".").match(/\d+(\.\d+)?/);
   return eslesme ? parseFloat(eslesme[0]) : 0;
 }
 
@@ -63,10 +61,7 @@ function markaListesiniDoldur() {
 }
 
 function filtrelenmisVeSiralanmisTelefonlar() {
-  const aramaMetni = document
-    .getElementById("arama-kutusu")
-    .value.toLowerCase()
-    .trim();
+  const aramaMetni = document.getElementById("arama-kutusu").value.toLowerCase().trim();
   const seciliMarka = document.getElementById("marka-filtresi").value;
   const siralama = document.getElementById("siralama-secici").value;
 
@@ -112,101 +107,4 @@ function kartOzellikListesiOlustur(tel) {
     .join("");
 }
 
-function kartlariCiz() {
-  const listeAlani = document.getElementById("telefon-listesi");
-  const gosterilecekler = filtrelenmisVeSiralanmisTelefonlar();
-
-  if (gosterilecekler.length === 0) {
-    listeAlani.innerHTML = `<p class="bos-mesaj">Aramanıza uygun telefon bulunamadı.</p>`;
-    return;
-  }
-
-  listeAlani.innerHTML = gosterilecekler
-    .map((tel) => {
-      const seciliMi = seciliTelefonlar.includes(tel.orijinalIndex);
-
-      return ` <article class="telefon-karti ${seciliMi ? "secili" : ""}"> <div> <div class="kart-ust"> <span class="marka-etiket">${tel.marka}</span> </div> <h3>${tel.marka} ${tel.model}</h3> <ul> ${kartOzellikListesiOlustur(tel)} </ul> </div> <button onclick="karsilastirmayaEkleCikar(${tel.orijinalIndex})"> ${seciliMi ? "✓ Karşılaştırmada" : "+ Karşılaştır"} </button> </article> `;
-    })
-    .join("");
-}
-
-function karsilastirmayiCiz() {
-  const alan = document.getElementById("karsilastirma-alani");
-  if (!alan) return;
-
-  if (seciliTelefonlar.length === 0) {
-    alan.innerHTML = "";
-    return;
-  }
-
-  const secilenler = seciliTelefonlar.map((i) => tumTelefonlar[i]);
-
-  const tumOzellikAnahtarlari = [];
-  secilenler.forEach((tel) => {
-    Object.keys(tel).forEach((anahtar) => {
-      if (
-        !HARIC_TUTULAN_ALANLAR.includes(anahtar) &&
-        !tumOzellikAnahtarlari.includes(anahtar)
-      ) {
-        tumOzellikAnahtarlari.push(anahtar);
-      }
-    });
-  });
-
-  const tabloSatirlari = tumOzellikAnahtarlari
-    .map((anahtar) => {
-      return ` <tr> <td><strong>${etiketGetir(anahtar)}</strong></td> ${secilenler .map((tel) => { const deger = tel[anahtar]; const gosterim = deger !== undefined && deger !== null && String(deger).trim() !== "" ? Array.isArray(deger) ? deger.join(", ") : deger : "-"; return `<td>${gosterim}</td>`; }) .join("")} </tr> `;
-    })
-    .join("");
-
-  alan.innerHTML = ` <div class="karsilastirma-kutusu"> <div class="karsilastirma-ust"> <h2>⚖️ Karşılaştırma Tablosu (${secilenler.length}/3)</h2> <button class="temizle-btn" onclick="karsilastirmayiTemizle()">Temizle</button> </div> <div class="tablo-sarmalayici"> <table> <thead> <tr> <th>Özellik</th> ${secilenler .map((t) => `<th>${t.marka} ${t.model}</th>`) .join("")} </tr> </thead> <tbody> ${tabloSatirlari} </tbody> </table> </div> </div> `;
-}
-
-function karsilastirmayaEkleCikar(orijinalIndex) {
-  if (seciliTelefonlar.includes(orijinalIndex)) {
-    seciliTelefonlar = seciliTelefonlar.filter((i) => i !== orijinalIndex);
-  } else {
-    if (seciliTelefonlar.length >= 3) {
-      alert("En fazla 3 telefonu aynı anda karşılaştırabilirsiniz.");
-      return;
-    }
-    seciliTelefonlar.push(orijinalIndex);
-  }
-  kartlariCiz();
-  karsilastirmayiCiz();
-}
-
-function karsilastirmayiTemizle() {
-  seciliTelefonlar = [];
-  kartlariCiz();
-  karsilastirmayiCiz();
-}
-
-async function telefonlariYukle() {
-  const listeAlani = document.getElementById("telefon-listesi");
-
-  try {
-    const yanit = await fetch("./telefonlar.json");
-    if (!yanit.ok) throw new Error("telefonlar.json okunamadı.");
-
-    tumTelefonlar = await yanit.json();
-    markaListesiniDoldur();
-    kartlariCiz();
-
-    document
-      .getElementById("arama-kutusu")
-      .addEventListener("input", kartlariCiz);
-    document
-      .getElementById("marka-filtresi")
-      .addEventListener("change", kartlariCiz);
-    document
-      .getElementById("siralama-secici")
-      .addEventListener("change", kartlariCiz);
-  } catch (hata) {
-    console.error(hata);
-    listeAlani.innerHTML =
-      "<p>Telefon verileri yüklenirken bir hata oluştu.</p>";
-  }
-}
-
-document.addEventListener("DOMContentLoaded", telefonlariYukle);
+function kart
