@@ -1,15 +1,111 @@
 [
   {
+    "id": "apple-iphone-18-pro-max",
+    "marka": "Apple",
+    "model": "iPhone 18 Pro Max",
+    "islemci": "Apple A20 Pro",
+    "ram": "12 GB",
+    "depolama": "256 GB / 512 GB / 1 TB / 2 TB",
+    "ekran": "6.9 inç OLED 120Hz ProMotion",
+    "kamera": "48 MP Ana + 48 MP Ultra Geniş + 48 MP 4x Telefoto",
+    "batarya": "5391 mAh"
+  },
+  {
+    "id": "apple-iphone-18-pro",
+    "marka": "Apple",
+    "model": "iPhone 18 Pro",
+    "islemci": "Apple A20 Pro",
+    "ram": "12 GB",
+    "depolama": "256 GB / 512 GB / 1 TB / 2 TB",
+    "ekran": "6.3 inç OLED 120Hz ProMotion",
+    "kamera": "48 MP Ana + 48 MP Ultra Geniş + 48 MP 4x Telefoto",
+    "batarya": "4056 mAh"
+  },
+  {
+    "id": "apple-iphone-duo",
+    "marka": "Apple",
+    "model": "iPhone Duo (Katlanabilir)",
+    "islemci": "Apple A20 Pro",
+    "depolama": "256 GB / 512 GB / 1 TB / 2 TB",
+    "ekran": "5.4 inç dış + 7.6 inç iç ekran, 120Hz ProMotion",
+    "kamera": "48 MP Ana + 48 MP Ultra Geniş"
+  },
+  {
+    "id": "apple-iphone-17-pro-max",
+    "marka": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "islemci": "Apple A19 Pro",
+    "ram": "12 GB",
+    "depolama": "256 GB / 512 GB / 1 TB / 2 TB",
+    "ekran": "6.9 inç OLED 120Hz ProMotion",
+    "kamera": "48 MP Ana + 48 MP Ultra Geniş + 48 MP 4x Telefoto",
+    "batarya": "4823 mAh"
+  },
+  {
+    "id": "apple-iphone-17-pro",
+    "marka": "Apple",
+    "model": "iPhone 17 Pro",
+    "islemci": "Apple A19 Pro",
+    "ram": "12 GB",
+    "depolama": "256 GB / 512 GB / 1 TB",
+    "ekran": "6.3 inç OLED 120Hz ProMotion",
+    "kamera": "48 MP Ana + 48 MP Ultra Geniş + 48 MP 4x Telefoto",
+    "batarya": "3988 mAh"
+  },
+  {
+    "id": "apple-iphone-17",
+    "marka": "Apple",
+    "model": "iPhone 17",
+    "islemci": "Apple A19",
+    "ram": "8 GB",
+    "depolama": "256 GB / 512 GB",
+    "ekran": "6.3 inç LTPO Super Retina XDR OLED 120Hz",
+    "kamera": "48 MP Ana + 48 MP Ultra Geniş",
+    "batarya": "3692 mAh"
+  },
+  {
+    "id": "apple-iphone-air",
+    "marka": "Apple",
+    "model": "iPhone Air",
+    "islemci": "Apple A19 Pro",
+    "ram": "12 GB",
+    "depolama": "256 GB / 512 GB / 1 TB",
+    "ekran": "6.5 inç OLED 120Hz ProMotion",
+    "kamera": "48 MP Ana (tek kamera)",
+    "batarya": "3149 mAh"
+  },
+  {
+    "id": "apple-iphone-17e",
+    "marka": "Apple",
+    "model": "iPhone 17e",
+    "islemci": "Apple A19",
+    "ram": "8 GB",
+    "depolama": "256 GB / 512 GB",
+    "ekran": "6.1 inç Super Retina XDR OLED 60Hz",
+    "kamera": "48 MP Ana (tek kamera)",
+    "batarya": "4005 mAh"
+  },
+  {
+    "id": "apple-iphone-16-pro-max",
+    "marka": "Apple",
+    "model": "iPhone 16 Pro Max",
+    "islemci": "Apple A18 Pro",
+    "ram": "8 GB",
+    "depolama": "256 GB / 512 GB / 1 TB",
+    "ekran": "6.9 inç OLED 120Hz ProMotion",
+    "kamera": "48 MP Ana + 48 MP Ultra Geniş + 12 MP 5x Telefoto",
+    "batarya": "4685 mAh"
+  },
+  {
     "id": "apple-iphone-16-pro",
     "marka": "Apple",
     "model": "iPhone 16 Pro",
     "islemci": "Apple A18 Pro",
     "ram": "8 GB",
-    "depolama": "128 GB",
-    "ekran": "6.3 inç LTPO Super Retina XDR OLED 120Hz",
+    "depolama": "128 GB / 256 GB / 512 GB / 1 TB",
+    "ekran": "6.3 inç OLED 120Hz ProMotion",
     "kamera": "48 MP Ana + 48 MP Ultra Geniş + 12 MP 5x Telefoto",
-    "batarya": "3582 mAh",
-    "fiyat_tl": 79999
+    "batarya": "3582 mAh"
   },
   {
     "id": "apple-iphone-16",
@@ -17,11 +113,65 @@
     "model": "iPhone 16",
     "islemci": "Apple A18",
     "ram": "8 GB",
-    "depolama": "128 GB",
+    "depolama": "128 GB / 256 GB / 512 GB",
     "ekran": "6.1 inç Super Retina XDR OLED 60Hz",
     "kamera": "48 MP Ana + 12 MP Ultra Geniş",
-    "batarya": "3561 mAh",
-    "fiyat_tl": 64999
+    "batarya": "3561 mAh"
+  },
+  {
+    "id": "apple-iphone-16e",
+    "marka": "Apple",
+    "model": "iPhone 16e",
+    "islemci": "Apple A18",
+    "ram": "8 GB",
+    "depolama": "128 GB / 256 GB / 512 GB",
+    "ekran": "6.1 inç Super Retina XDR OLED 60Hz",
+    "kamera": "48 MP Ana (tek kamera)",
+    "batarya": "4005 mAh"
+  },
+  {
+    "id": "apple-iphone-15-pro-max",
+    "marka": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "islemci": "Apple A17 Pro",
+    "ram": "8 GB",
+    "depolama": "256 GB / 512 GB / 1 TB",
+    "ekran": "6.7 inç OLED 120Hz",
+    "kamera": "48 MP Ana + 12 MP Ultra Geniş + 12 MP 5x Telefoto",
+    "batarya": "4422 mAh"
+  },
+  {
+    "id": "apple-iphone-15",
+    "marka": "Apple",
+    "model": "iPhone 15",
+    "islemci": "Apple A16 Bionic",
+    "ram": "6 GB",
+    "depolama": "128 GB / 256 GB / 512 GB",
+    "ekran": "6.1 inç Super Retina XDR OLED",
+    "kamera": "48 MP Ana + 12 MP Ultra Geniş",
+    "batarya": "3349 mAh"
+  },
+  {
+    "id": "apple-iphone-14",
+    "marka": "Apple",
+    "model": "iPhone 14",
+    "islemci": "Apple A15 Bionic",
+    "ram": "6 GB",
+    "depolama": "128 GB / 256 GB / 512 GB",
+    "ekran": "6.1 inç Super Retina XDR OLED 60Hz",
+    "kamera": "12 MP Ana + 12 MP Ultra Geniş",
+    "batarya": "3279 mAh"
+  },
+  {
+    "id": "apple-iphone-13",
+    "marka": "Apple",
+    "model": "iPhone 13",
+    "islemci": "Apple A15 Bionic",
+    "ram": "4 GB",
+    "depolama": "128 GB / 256 GB / 512 GB",
+    "ekran": "6.1 inç Super Retina XDR OLED",
+    "kamera": "12 MP Ana + 12 MP Ultra Geniş",
+    "batarya": "3227 mAh"
   },
   {
     "id": "samsung-galaxy-s25-ultra",
@@ -32,8 +182,7 @@
     "depolama": "256 GB",
     "ekran": "6.9 inç Dynamic AMOLED 2X 120Hz",
     "kamera": "200 MP Ana + 50 MP Ultra Geniş + 50 MP 5x + 10 MP 3x",
-    "batarya": "5000 mAh",
-    "fiyat_tl": 74999
+    "batarya": "5000 mAh"
   },
   {
     "id": "samsung-galaxy-a55",
@@ -44,8 +193,7 @@
     "depolama": "128 GB",
     "ekran": "6.6 inç Super AMOLED 120Hz",
     "kamera": "50 MP Ana + 12 MP Ultra Geniş + 5 MP Makro",
-    "batarya": "5000 mAh",
-    "fiyat_tl": 21999
+    "batarya": "5000 mAh"
   },
   {
     "id": "xiaomi-14t-pro",
@@ -56,8 +204,7 @@
     "depolama": "512 GB",
     "ekran": "6.67 inç AMOLED 144Hz",
     "kamera": "50 MP Leica Ana + 50 MP Telefoto + 12 MP Ultra Geniş",
-    "batarya": "5000 mAh",
-    "fiyat_tl": 42999
+    "batarya": "5000 mAh"
   },
   {
     "id": "poco-x6-pro",
@@ -68,8 +215,7 @@
     "depolama": "512 GB",
     "ekran": "6.67 inç Flow AMOLED 120Hz",
     "kamera": "64 MP Ana + 8 MP Ultra Geniş + 2 MP Makro",
-    "batarya": "5000 mAh",
-    "fiyat_tl": 18999
+    "batarya": "5000 mAh"
   },
   {
     "id": "oppo-reno12-pro",
@@ -80,7 +226,6 @@
     "depolama": "512 GB",
     "ekran": "6.7 inç AMOLED 120Hz",
     "kamera": "50 MP Ana + 50 MP Portre Telefoto + 8 MP Ultra Geniş",
-    "batarya": "5000 mAh",
-    "fiyat_tl": 29999
+    "batarya": "5000 mAh"
   }
 ]
