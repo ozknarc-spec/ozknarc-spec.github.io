@@ -8,8 +8,26 @@
 </head>
 <body>
 
-  <h1>📱 TelefonKarşılaştır</h1>
-  <p>Türkiye'nin telefon karşılaştırma platformu.</p>
+  <header>
+    <h1>📱 TelefonKarşılaştır</h1>
+    <p>Türkiye'nin kapsamlı telefon karşılaştırma platformu.</p>
+  </header>
+
+  <section class="filtre-alani">
+    <input type="text" id="arama-kutusu" placeholder="Marka, model veya işlemci ara... (örn: Samsung, A18, 120W)">
+    
+    <select id="marka-filtresi">
+      <option value="hepsi">Tüm Markalar</option>
+    </select>
+
+    <select id="siralama-secici">
+      <option value="varsayilan">Sıralama: Varsayılan</option>
+      <option value="fiyat-artan">Fiyat: Ucuzdan Pahalıya</option>
+      <option value="fiyat-azalan">Fiyat: Pahalıdan Ucuza</option>
+      <option value="batarya-azalan">Batarya: En Yüksek</option>
+      <option value="ram-azalan">RAM: En Yüksek</option>
+    </select>
+  </section>
 
   <section id="karsilastirma-alani"></section>
 
