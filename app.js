@@ -61,6 +61,7 @@ function oner(){const usage=$("kullanim-onceligi").value,min=Number($("onerici-r
 function olaylar(){
  ["arama-kutusu","marka-filtresi","siralama-secici","ram-filtresi","batarya-filtresi","besg-filtresi"].forEach(id=>$(id).addEventListener(id==="arama-kutusu"?"input":"change",kartlariCiz));
  $("filtreleri-temizle").addEventListener("click",()=>{["arama-kutusu"].forEach(id=>$(id).value="");["marka-filtresi","siralama-secici","ram-filtresi","batarya-filtresi","besg-filtresi"].forEach((id,i)=>$(id).selectedIndex=0);aktifGorunum="all";document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.view==="all"));kartlariCiz();});
+ $("oner-sonuc").addEventListener("click",e=>{const b=e.target.closest("button[data-action=\"detail\"]");if(b)detayAc(b.dataset.id);});
  $("telefon-listesi").addEventListener("click",e=>{const b=e.target.closest("button[data-action]");if(!b)return;const {action,id}=b.dataset;if(action==="compare"){if(seciliTelefonlar.length>=MAKSIMUM_KARSILASTIRMA){alert("En fazla 4 telefon karşılaştırabilirsin.");return;}seciliTelefonlar.push(id);kartlariCiz();karsilastirmayiCiz();}if(action==="favorite")favoriDegistir(id);if(action==="detail")detayAc(id);});
  $("karsilastirmayi-temizle").addEventListener("click",()=>{seciliTelefonlar=[];kartlariCiz();karsilastirmayiCiz();});
  document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{aktifGorunum=b.dataset.view;document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));kartlariCiz();}));
