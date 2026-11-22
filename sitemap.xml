@@ -60,4 +60,7 @@
   <url><loc>https://ozknarc-spec.github.io/telefonkarsilastir/telefon/honor-magic-7-pro/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://ozknarc-spec.github.io/telefonkarsilastir/telefon/nothing-phone-3/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://ozknarc-spec.github.io/telefonkarsilastir/telefon/oppo-reno12-pro/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ozknarc-spec.github.io/telefonkarsilastir/hakkimizda.html</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://ozknarc-spec.github.io/telefonkarsilastir/gizlilik-politikasi.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://ozknarc-spec.github.io/telefonkarsilastir/iletisim.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
 </urlset>
