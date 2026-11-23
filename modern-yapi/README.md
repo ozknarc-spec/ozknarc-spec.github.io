@@ -8,8 +8,8 @@ Türkçe, responsive inşaat şirketi tanıtım sitesi. Antrasit-altın renk pal
 
 ## Yayına almadan önce
 
-- WhatsApp bağlantısındaki `905000000000` numarasını gerçek numarayla değiştirin.
+- Dosyanın altındaki `WHATSAPP_NUMBER` sabitini gerçek numarayla değiştirin (ülke koduyla, `+` işareti olmadan).
 - Telefon, e-posta ve adres alanlarını güncelleyin.
-- Örnek proje adlarını, fotoğrafları, referansları ve istatistikleri gerçek müşteri bilgileriyle değiştirin.
+- Örnek proje adlarını, fotoğrafları ve referansları gerçek müşteri bilgileriyle değiştirin. Sayısal başarı istatistikleri kullanılmıyor; doğrulanmamış rakam gösterilmez.
 - Teklif formu verileri sunucuya kaydetmez; WhatsApp mesajı oluşturur.
 - Bu demo, mevcut `telefonkarsilastir` deposunda `modern-yapi` klasöründe, ayrı `modern-yapi-demo` dalında tutulur; ana dal değiştirilmemiştir.
