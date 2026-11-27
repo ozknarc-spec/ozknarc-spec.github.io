@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ozknarc-spec.github.io/telefonkarsilastir/sitemap.xml
+Sitemap: https://ozknarc-spec.github.io/sitemap.xml
